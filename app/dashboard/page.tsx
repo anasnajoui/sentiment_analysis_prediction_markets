@@ -121,10 +121,10 @@ export default function Dashboard() {
     };
 
     const handleRemoveBet = async (betId: string) => {
+        // Store the bet to remove before the try block
+        const betToRemove = bets.find(b => b.id === betId);
+        
         try {
-            // Store the bet to remove before filtering
-            const betToRemove = bets.find(b => b.id === betId);
-            
             // Optimistically remove bet from UI first
             setBets(currentBets => currentBets.filter(b => b.id !== betId));
             
