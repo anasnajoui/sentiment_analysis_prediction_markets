@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import BetChart from "../components/BetChart";
+import { useState, useEffect, useCallback } from "react";
 import AddBetDialog from "../components/AddBetDialog";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
+import { PolymarketEvent } from "../types/polymarket";
 
 interface Bet {
     id: string;
@@ -13,21 +13,24 @@ interface Bet {
     currentPrice: number;
     liquidity: number;
     slug: string;
-    markets: Array<{
-        outcomePrices: string;
-        liquidity: string;
-    }>;
+    markets: PolymarketEvent["markets"];
 }
+
+const REFRESH_INTERVALS = [
+    { label: '5 seconds', value: 5000 },
+    { label: '1 minute', value: 60000 },
+] as const;
 
 export default function Dashboard() {
     const [bets, setBets] = useState<Bet[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [refreshInterval, setRefreshInterval] = useState<number>(60000);
 
-    const refreshBetData = async (bet: Bet) => {
+    const refreshBetData = async (bet: Bet): Promise<Bet> => {
         try {
             const response = await fetch(`https://gamma-api.polymarket.com/events?slug=${bet.slug}`);
-            const data = await response.json();
+            const data = await response.json() as PolymarketEvent[];
             
             if (data && data[0]) {
                 const outcomePrices = JSON.parse(data[0].markets[0].outcomePrices);
@@ -43,12 +46,14 @@ export default function Dashboard() {
             }
             return bet;
         } catch (error) {
-            console.error(`Error refreshing bet ${bet.slug}:`, error);
+            if (error instanceof Error) {
+                console.error(`Error refreshing bet ${bet.slug}:`, error.message);
+            }
             return bet;
         }
     };
 
-    const refreshAllBets = async () => {
+    const refreshAllBets = useCallback(async () => {
         if (bets.length === 0) return;
         
         setIsLoading(true);
@@ -57,26 +62,27 @@ export default function Dashboard() {
             setBets(updatedBets);
             toast.success("Prices updated");
         } catch (error) {
-            console.error("Error refreshing bets:", error);
+            if (error instanceof Error) {
+                console.error("Error refreshing bets:", error.message);
+            }
             toast.error("Failed to update prices");
         } finally {
             setIsLoading(false);
         }
-    };
-
-    useEffect(() => {
-        const intervalId = setInterval(refreshAllBets, 60000);
-
-        return () => clearInterval(intervalId);
     }, [bets]);
 
-    const addBet = async (betData: any) => {
+    useEffect(() => {
+        const intervalId = setInterval(refreshAllBets, refreshInterval);
+        return () => clearInterval(intervalId);
+    }, [refreshAllBets, refreshInterval]);
+
+    const addBet = (betData: PolymarketEvent) => {
         try {
             const outcomePrices = JSON.parse(betData.markets[0].outcomePrices);
             const yesPrice = parseFloat(outcomePrices[0]) * 100;
             const liquidity = parseFloat(betData.liquidity);
 
-            const newBet = {
+            const newBet: Bet = {
                 id: betData.id,
                 title: betData.title,
                 image: betData.image,
@@ -110,7 +116,18 @@ export default function Dashboard() {
                     <h1 className="text-3xl font-bold text-[#171717] dark:text-white">
                         Prediction Markets
                     </h1>
-                    <div className="flex gap-3">
+                    <div className="flex items-center gap-3">
+                        <select
+                            value={refreshInterval}
+                            onChange={(e) => setRefreshInterval(Number(e.target.value))}
+                            className="rounded-md border border-[#EAEAEA] dark:border-[#333333] bg-transparent px-3 py-2 text-sm text-[#171717] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#171717] dark:focus:ring-white"
+                        >
+                            {REFRESH_INTERVALS.map((interval) => (
+                                <option key={interval.value} value={interval.value}>
+                                    Refresh every {interval.label}
+                                </option>
+                            ))}
+                        </select>
                         <button
                             onClick={() => setDialogOpen(true)}
                             className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-[#171717] text-white dark:bg-white dark:text-black gap-2 hover:bg-[#383838] dark:hover:bg-[#f5f5f5] text-sm h-10 px-4"

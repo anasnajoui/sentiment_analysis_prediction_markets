@@ -4,11 +4,12 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/app/components/dialog";
 import { Input } from "@/app/components/input";
 import { toast } from "react-hot-toast";
+import { PolymarketEvent } from "@/app/types/polymarket";
 
 interface AddBetDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onBetAdd: (betData: any) => void;
+  onBetAdd: (betData: PolymarketEvent) => void;
 }
 
 export default function AddBetDialog({ open, onOpenChange, onBetAdd }: AddBetDialogProps) {
@@ -18,7 +19,6 @@ export default function AddBetDialog({ open, onOpenChange, onBetAdd }: AddBetDia
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      // Extract slug from URL
       const slugMatch = betLink.match(/event\/([^/?]+)/);
       if (!slugMatch) {
         toast.error("Invalid Polymarket URL format");
@@ -27,12 +27,12 @@ export default function AddBetDialog({ open, onOpenChange, onBetAdd }: AddBetDia
 
       const slug = slugMatch[1];
       const response = await fetch(`https://gamma-api.polymarket.com/events?slug=${slug}`);
-      const data = await response.json();
+      const data = await response.json() as PolymarketEvent[];
 
       if (data && data[0]) {
         onBetAdd(data[0]);
         onOpenChange(false);
-        setBetLink(""); // Reset input
+        setBetLink("");
         toast.success("Bet added successfully!");
       } else {
         toast.error("Could not fetch bet data");
