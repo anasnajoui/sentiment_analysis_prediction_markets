@@ -264,13 +264,13 @@ export default function Dashboard() {
                             <div className="col-span-2 text-right">
                                 {bet.markets?.[0]?.clobTokenIds && (
                                     <PriceAnalysis 
-                                    marketId={JSON.parse(bet.markets[0].clobTokenIds)[0]} 
-                                    compact={true}
-                                    renderChart={true}
-                                    chartOnly
-                                    refreshInterval={refreshInterval}
-                                    key={`${bet.markets[0].clobTokenId}-${bet.lastUpdated}`}
-                                  />
+                                        marketId={JSON.parse(bet.markets[0].clobTokenIds)[0]} 
+                                        compact={true}
+                                        renderChart={true}
+                                        chartOnly
+                                        refreshInterval={refreshInterval}
+                                        key={`${JSON.parse(bet.markets[0].clobTokenIds)[0]}-${bet.lastUpdated}`}
+                                    />
                                 )}
                             </div>
                             <div className="col-span-1 text-right">
