@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import AddBetDialog from "../components/AddBetDialog";
+import PriceAnalysis from "../components/PriceAnalysis";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
 import { PolymarketEvent } from "../types/polymarket";
@@ -14,6 +15,7 @@ interface Bet {
     liquidity: number;
     slug: string;
     markets: PolymarketEvent["markets"];
+    clobTokenId: string;
 }
 
 const REFRESH_INTERVALS = [
@@ -77,27 +79,21 @@ export default function Dashboard() {
     }, [refreshAllBets, refreshInterval]);
 
     const addBet = (betData: PolymarketEvent) => {
-        try {
-            const outcomePrices = JSON.parse(betData.markets[0].outcomePrices);
-            const yesPrice = parseFloat(outcomePrices[0]) * 100;
-            const liquidity = parseFloat(betData.liquidity);
-
-            const newBet: Bet = {
-                id: betData.id,
-                title: betData.title,
-                image: betData.image,
-                currentPrice: yesPrice,
-                liquidity: liquidity,
-                slug: betData.slug,
-                markets: betData.markets
-            };
-
-            setBets(prevBets => [...prevBets, newBet]);
-            toast.success("Bet added successfully!");
-        } catch (error) {
-            console.error("Error processing bet data:", error);
-            toast.error("Failed to process bet data");
-        }
+        const clobTokenIds = JSON.parse(betData.markets[0].clobTokenIds);
+        const yesTokenId = clobTokenIds[0];
+        
+        const newBet: Bet = {
+            id: betData.id,
+            title: betData.title,
+            image: betData.image,
+            currentPrice: parseFloat(JSON.parse(betData.markets[0].outcomePrices)[0]) * 100,
+            liquidity: parseFloat(betData.liquidity),
+            slug: betData.slug,
+            markets: betData.markets,
+            clobTokenId: yesTokenId
+        };
+        
+        setBets(prev => [...prev, newBet]);
     };
 
     const formatLiquidity = (value: number): string => {
@@ -174,6 +170,11 @@ export default function Dashboard() {
                                         </td>
                                         <td className="px-6 py-4 text-sm text-[#171717] dark:text-white">
                                             {formatLiquidity(bet.liquidity)}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {bet.clobTokenId && (
+                                                <PriceAnalysis marketId={bet.clobTokenId} />
+                                            )}
                                         </td>
                                     </tr>
                                 ))}
