@@ -15,4 +15,5 @@ export interface Bet {
     slug: string;
     markets: PolymarketEvent["markets"];
     yes_token_id?: string;
+    lastUpdated?: number;
 }
