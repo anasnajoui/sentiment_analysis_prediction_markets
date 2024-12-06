@@ -88,14 +88,14 @@ export default function Dashboard() {
                 const liquidity = parseFloat(data[0].liquidity);
 
                 // Force PriceAnalysis to refresh when bet data updates
-                const marketId = data[0].markets[0].clobTokenId;
+                const marketId = JSON.parse(data[0].markets[0].clobTokenIds)[0];
                 
                 return {
                     ...bet,
                     currentPrice: yesPrice,
                     liquidity: liquidity,
                     markets: data[0].markets,
-                    lastUpdated: Date.now() // Add timestamp to trigger PriceAnalysis refresh
+                    lastUpdated: Date.now()
                 };
             }
             return bet;
