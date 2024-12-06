@@ -6,22 +6,14 @@ import {
   LinearScale,
   PointElement,
   LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  ChartOptions
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
-// Register ChartJS components
 ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
-  Title,
-  Tooltip,
-  Legend
 );
 
 interface PricePoint {
@@ -38,20 +30,17 @@ export default function BetChart({ data }: BetChartProps) {
     labels: data.map(point => point.time),
     datasets: [
       {
-        label: 'Price',
         data: data.map(point => point.price),
         borderColor: 'rgb(59, 130, 246)',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        borderWidth: 2,
-        fill: true,
+        borderWidth: 1.5,
+        fill: false,
         tension: 0.4,
-        pointRadius: 2,
-        pointHoverRadius: 5,
+        pointRadius: 0,
       },
     ],
   };
 
-  const options: ChartOptions<'line'> = {
+  const options = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -59,31 +48,15 @@ export default function BetChart({ data }: BetChartProps) {
         display: false,
       },
       tooltip: {
-        mode: 'index',
-        intersect: false,
-        callbacks: {
-          label: (context) => `Price: ${context.parsed.y.toFixed(2)}%`,
-        },
+        enabled: false,
       },
     },
     scales: {
       x: {
-        grid: {
-          display: false,
-        },
-        ticks: {
-          maxTicksLimit: 6,
-          maxRotation: 0,
-        },
+        display: false,
       },
       y: {
-        beginAtZero: false,
-        grid: {
-          color: 'rgba(0, 0, 0, 0.1)',
-        },
-        ticks: {
-          callback: (value) => `${value}%`,
-        },
+        display: false,
       },
     },
     interaction: {
@@ -93,7 +66,7 @@ export default function BetChart({ data }: BetChartProps) {
   };
 
   return (
-    <div style={{ height: '200px', width: '100%' }}>
+    <div style={{ height: '50px', width: '100%' }}>
       <Line data={chartData} options={options} />
     </div>
   );
