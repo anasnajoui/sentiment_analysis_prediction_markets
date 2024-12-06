@@ -8,10 +8,7 @@ import Image from "next/image";
 import { PolymarketEvent, Bet } from "@/types/polymarket";
 import { supabase, getBets, addBet, removeBet } from "@/lib/supabase";
 
-const REFRESH_INTERVALS = [
-    { label: '5 seconds', value: 5000 },
-    { label: '1 minute', value: 60000 },
-] as const;
+export const REFRESH_INTERVALS = [15000, 30000, 60000] as const;
 
 export default function Dashboard() {
     const [bets, setBets] = useState<Bet[]>([]);

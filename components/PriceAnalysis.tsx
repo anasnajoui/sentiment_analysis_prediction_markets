@@ -8,7 +8,7 @@ interface PricePoint {
   p: string;
 }
 
-interface PriceChanges {
+export interface PriceChanges {
   oneHour: number;
   oneDay: number;
   sevenDays: number;
@@ -22,9 +22,8 @@ interface PriceAnalysisProps {
   refreshInterval?: number;
 }
 
-const formatChange = (change: number) => {
-  const sign = change >= 0 ? '+' : '';
-  return `${sign}${change.toFixed(2)}%`;
+const formatChange = (change: number): string => {
+  return `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
 };
 
 export default function PriceAnalysis({ 
