@@ -2,17 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import BetChart from './BetChart';
-
-interface PricePoint {
-  t: number;
-  p: string;
-}
-
-export interface PriceChanges {
-  oneHour: number;
-  oneDay: number;
-  sevenDays: number;
-}
+import { PriceHistoryPoint, ChartPoint } from '@/types/price';
 
 interface PriceAnalysisProps {
   marketId: string;
@@ -34,7 +24,7 @@ export default function PriceAnalysis({
   refreshInterval = 60000,
 }: PriceAnalysisProps) {
   const [priceChanges, setPriceChanges] = useState({ oneHour: 0, oneDay: 0, sevenDays: 0 });
-  const [chartData, setChartData] = useState<PricePoint[]>([]);
+  const [chartData, setChartData] = useState<ChartPoint[]>([]);
 
   useEffect(() => {
     if (!marketId) return;
@@ -97,7 +87,7 @@ export default function PriceAnalysis({
           };
 
           setPriceChanges(changes);
-          setChartData(dailyData.history.map((point: { t: number; p: string }) => ({
+          setChartData(dailyData.history.map((point: PriceHistoryPoint) => ({
             time: new Date(point.t * 1000).toISOString(),
             price: parseFloat(point.p) * 100
           })));

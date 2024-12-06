@@ -8,6 +8,7 @@ import {
   LineElement,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { ChartPoint } from '@/types/price';
 
 ChartJS.register(
   CategoryScale,
@@ -16,13 +17,8 @@ ChartJS.register(
   LineElement,
 );
 
-interface PricePoint {
-  time: string;
-  price: number;
-}
-
 interface BetChartProps {
-  data: PricePoint[];
+  data: ChartPoint[];
 }
 
 export default function BetChart({ data }: BetChartProps) {
