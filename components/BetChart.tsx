@@ -61,7 +61,7 @@ export default function BetChart({ data }: BetChartProps) {
     },
     interaction: {
       intersect: false,
-      mode: 'index',
+      mode: 'index' as const,
     },
   };
 
