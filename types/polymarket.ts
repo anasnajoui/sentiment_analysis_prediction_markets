@@ -1,9 +1,13 @@
 export interface PolymarketEvent {
+    id: string;
+    title: string;
+    image: string;
+    slug: string;
+    liquidity: string;
     markets: {
         clobTokenIds: string;
         outcomePrices: string;
     }[];
-    liquidity: string;
 }
 
 export interface Bet {
