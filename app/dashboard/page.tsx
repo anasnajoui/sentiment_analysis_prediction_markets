@@ -226,8 +226,8 @@ export default function Dashboard() {
                         <div className="col-span-1 text-right">1H %</div>
                         <div className="col-span-1 text-right">24H %</div>
                         <div className="col-span-1 text-right">7D %</div>
-                        <div className="col-span-2 text-right">LIQUIDITY</div>
-                        <div className="col-span-2 text-right">LAST 24H</div>
+                        <div className="col-span-1 text-right">LIQUIDITY</div>
+                        <div className="col-span-3 text-right">LAST 7 DAYS</div>
                         <div className="col-span-1 text-right">REMOVE</div>
                     </div>
                     {bets.map((bet) => (
@@ -258,10 +258,10 @@ export default function Dashboard() {
                                     refreshInterval={refreshInterval}
                                 />
                             </div>
-                            <div className="col-span-2 text-right text-sm text-[#171717]">
+                            <div className="col-span-1 text-right text-sm text-[#171717]">
                                 ${Number(bet.liquidity).toLocaleString()}
                             </div>
-                            <div className="col-span-2 text-right">
+                            <div className="col-span-3 text-right">
                                 {bet.markets?.[0]?.clobTokenIds && (
                                     <PriceAnalysis 
                                         marketId={JSON.parse(bet.markets[0].clobTokenIds)[0]} 
