@@ -44,8 +44,7 @@ export default function AddBetDialog({ open, onOpenChange, onBetAdd }: AddBetDia
           markets: [{
             ...event.markets[0],
             clobTokenIds: event.markets[0].clobTokenIds
-          }],
-          clobTokenId: JSON.parse(event.markets[0].clobTokenIds)[0]
+          }]
         };
 
         onOpenChange(false);
