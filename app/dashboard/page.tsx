@@ -7,14 +7,13 @@ import { toast } from "react-hot-toast";
 import Image from "next/image";
 import { PolymarketEvent, Bet } from "@/types/polymarket";
 import { supabase, getBets, addBet, removeBet } from "@/lib/supabase";
-
-export const REFRESH_INTERVALS = [15000, 30000, 60000] as const;
+import { REFRESH_INTERVALS } from '@/lib/constants';
 
 export default function Dashboard() {
     const [bets, setBets] = useState<Bet[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [refreshInterval, setRefreshInterval] = useState<number>(60000);
+    const [refreshInterval, setRefreshInterval] = useState<number>(REFRESH_INTERVALS[2]);
 
     useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {
@@ -168,7 +167,7 @@ export default function Dashboard() {
     }, [refreshInterval, refreshAllBets]);
 
     const toggleRefreshInterval = () => {
-        setRefreshInterval(current => current === 60000 ? 5000 : 60000);
+        setRefreshInterval(current => current === REFRESH_INTERVALS[2] ? REFRESH_INTERVALS[0] : REFRESH_INTERVALS[2]);
     };
 
     return (
@@ -181,14 +180,14 @@ export default function Dashboard() {
                             onClick={toggleRefreshInterval}
                             className={`
                                 h-9 px-4 rounded-full border transition-all duration-300 flex items-center gap-2
-                                ${refreshInterval === 5000 
+                                ${refreshInterval === REFRESH_INTERVALS[0] 
                                     ? 'border-emerald-500/20 bg-emerald-50/50' 
                                     : 'border-amber-500/20 bg-amber-50/50'
                                 }
                             `}
                         >
                             <div className="relative flex h-2 w-2">
-                                {refreshInterval === 5000 ? (
+                                {refreshInterval === REFRESH_INTERVALS[0] ? (
                                     <>
                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -201,11 +200,11 @@ export default function Dashboard() {
                                 )}
                             </div>
                             <span className={`text-sm font-medium transition-colors duration-300 ${
-                                refreshInterval === 5000 
+                                refreshInterval === REFRESH_INTERVALS[0] 
                                     ? 'text-emerald-700' 
                                     : 'text-amber-700'
                             }`}>
-                                {refreshInterval === 5000 ? 'Real-time updates' : 'Update every minute'}
+                                {refreshInterval === REFRESH_INTERVALS[0] ? 'Real-time updates' : 'Update every minute'}
                             </span>
                         </button>
                         <button
