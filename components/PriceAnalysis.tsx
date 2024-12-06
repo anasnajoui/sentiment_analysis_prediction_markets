@@ -97,7 +97,7 @@ export default function PriceAnalysis({
           };
 
           setPriceChanges(changes);
-          setChartData(dailyData.history.map(point => ({
+          setChartData(dailyData.history.map((point: { t: number; p: string }) => ({
             time: new Date(point.t * 1000).toISOString(),
             price: parseFloat(point.p) * 100
           })));
